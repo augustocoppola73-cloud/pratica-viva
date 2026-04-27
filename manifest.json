@@ -4,7 +4,7 @@
   "short_name": "Pratica Viva",
   "description": "Pratica Viva: pratica Nichiren, daimoku, gongyo, studio, diario e assistente di pratica.",
   "lang": "it",
-  "start_url": "./index.html?source=pwa-v13b",
+  "start_url": "./index.html?source=pwa-v13j",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -26,7 +26,7 @@
       "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     },
     {
       "src": "icons/apple-touch-icon.png",
