@@ -1,5 +1,5 @@
 
-const CACHE = 'pratica-viva-v16';
+const CACHE = 'pratica-viva-v17';
 const ASSETS = [
   './',
   './index.html',
