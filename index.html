@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#5a2330" />
+  <meta name="description" content="Pratica Viva: ricerca buddista Nichiren, daimoku, gongyo completo e diario di pratica." />  
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pratica Viva" />
+  <title>Pratica Viva</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="background-glow glow-a"></div>
+  <div class="background-glow glow-b"></div>
+
+  <div class="app-shell">
+    <header id="topbar" class="topbar glass">
+      <div class="brand">
+        <div class="brand-mark">✿</div>
+        <div>
+          <div class="brandline">Pratica Viva</div>
+          <h1>Studio, pratica e presenza</h1>
+          <p class="subtitle">Un compagno quotidiano per ricerca buddista Nichiren, daimoku, gongyo e preghiere.</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="installBtn" class="ghost hidden">Installa</button>
+        <button id="helpInstallBtn" class="ghost">Come si installa</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="home" class="view active">
+        <div class="hero card">
+          <div class="hero-copy home-refined">
+            <div class="eyebrow">Pratica Viva</div>
+            <h2>La tua pratica quotidiana, più semplice e viva</h2>
+            <p id="dailyMessage"></p>
+            <p class="home-subline">Scegli una direzione, apri uno spazio di calma e riparti dalla pratica.</p>
+            <div class="hero-actions">
+              <button data-go="practice">Inizia daimoku</button>
+              <button data-go="gongyo" class="secondary">Apri gongyo</button>
+              <button id="homeResumeGongyo" class="ghost">Continua gongyo</button>
+            </div>
+          </div>
+          <div class="hero-side">
+            <div class="orb"></div>
+            <div class="hero-stat">
+              <span>Oggi</span>
+              <strong>Fede · Pratica · Studio</strong>
+            </div>
+            <div class="hero-stat">
+              <span>Gongyo</span>
+              <strong>Segnalibro e audio</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card practice-assistant-card">
+          <div class="row between wrap">
+            <div>
+              <div class="term-meta">Assistente di pratica</div>
+              <h3>Il tuo passo di oggi</h3>
+              <p id="practiceAssistant" class="assistant-message">Caricamento suggerimento...</p>
+            </div>
+            <div class="actions compact-actions">
+              <button id="assistantDaimokuBtn" class="secondary">Vai al Daimoku</button>
+              <button id="assistantStudyBtn" class="ghost">Studio del giorno</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid two routine-grid">
+          <article class="card routine-card">
+            <div class="shortcut-icon">🌅</div>
+            <h3>Pratica del mattino</h3>
+            <p>Apri Gongyo e poi imposta automaticamente il Daimoku del mattino.</p>
+            <button id="morningRoutineBtn">Avvia routine mattina</button>
+          </article>
+          <article class="card routine-card">
+            <div class="shortcut-icon">🌙</div>
+            <h3>Pratica della sera</h3>
+            <p>Apri Gongyo e poi imposta automaticamente il Daimoku della sera.</p>
+            <button id="eveningRoutineBtn" class="secondary">Avvia routine sera</button>
+          </article>
+        </div>
+
+        <div class="card complete-session-card">
+          <div class="row between wrap">
+            <div>
+              <div class="term-meta">Flusso guidato</div>
+              <h3>Sessione completa</h3>
+              <p class="muted">Gongyo → Daimoku → preghiere silenziose, con passaggi guidati e senza automatismi invasivi.</p>
+            </div>
+            <div class="actions compact-actions">
+              <button id="completeSessionBtn">Avvia sessione completa</button>
+              <button id="cancelCompleteSessionBtn" class="ghost hidden">Annulla sessione</button>
+            </div>
+          </div>
+          <div id="completeSessionStatus" class="session-status muted">Nessuna sessione completa attiva.</div>
+        </div>
+
+        <div class="card stats-card home-secondary-card stats-home-top practice-chart-card">
+  <div class="row between wrap">
+    <div>
+      <h3>Andamento Daimoku</h3>
+      <p class="muted">Minuti praticati, progresso giornaliero e andamento nel tempo.</p>
+    </div>
+    <div class="actions compact-actions">
+      <select id="daimokuChartRange" class="chart-range-select" aria-label="Scala grafico Daimoku">
+        <option value="7">Settimanale</option>
+        <option value="30">Mensile</option>
+        <option value="365">Annuale</option>
+      </select>
+      <button id="resetStatsBtn" class="ghost">Reset statistiche</button>
+    </div>
+  </div>
+
+  <div class="daily-target-row">
+    <label for="dailyDaimokuTarget">Obiettivo giornaliero Daimoku</label>
+    <div class="target-control">
+      <input id="dailyDaimokuTarget" type="number" min="1" max="600" step="1" value="20" />
+      <span>minuti</span>
+    </div>
+  </div>
+
+  <div id="dailyPracticeBadge" class="practice-progress-badge">
+    <span class="badge-label">Obiettivo oggi</span>
+    <strong id="dailyPracticeText">0/20 min</strong>
+    <span id="dailyPracticeSub" class="badge-sub">Inizia con pochi minuti di Daimoku.</span>
+    <div class="badge-progress">
+      <div id="dailyPracticeProgress"></div>
+    </div>
+  </div>
+
+<div class="card">
+  <h3>Imposta obiettivo</h3>
+  <input type="number" id="goalInput" placeholder="Minuti (es. 60)">
+  <button id="saveGoal">Salva</button>
+</div>
+
+  <div id="statsBox" class="stats-grid stats-grid-compact"></div>
+
+  <div class="chart-wrap">
+    <canvas id="daimokuPracticeChart" height="180"></canvas>
+  </div>
+</div>
+
+        <div class="card daily-study-card">
+          <div class="row between wrap">
+            <div>
+              <div class="term-meta" id="dailyStudyCategory">Studio del giorno</div>
+              <h3 id="dailyStudyTitle">Studio del giorno</h3>
+              <p id="dailyStudySummary" class="muted">Un concetto buddista al giorno per alimentare pratica e studio.</p>
+            </div>
+            <div class="actions compact-actions">
+              <button id="dailyStudyReadMore" class="secondary">Leggi altro</button>
+              <button id="dailyStudySave" class="ghost">☆ Salva</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="gongyoListenPanel" class="card listen-panel hidden">
+          <div class="listen-orb"></div>
+          <div class="listen-title">Gongyo guidato · Solo ascolto</div>
+          <p class="muted">Ascolta la traccia completa senza testo a schermo. Puoi sempre mettere in pausa o tornare alla lettura.</p>
+        </div>
+
+        <div class="grid two">
+          <article class="card shortcut lift" data-go="dictionary">
+            <div class="shortcut-icon">⌕</div>
+            <h3>Ricerca buddista</h3>
+            <p>Termini, concetti, interpretazioni e temi come “tre veleni”, “torre preziosa”, “oscurità fondamentale”.</p>
+          </article>
+          <article class="card shortcut lift" data-go="gongyo">
+            <div class="shortcut-icon">ॐ</div>
+            <h3>Gongyo completo</h3>
+            <p>Hoben, Juryo, preghiere silenziose, campana e scorrimento personalizzabile.</p>
+          </article>
+        </div>
+
+        <div class="grid two">
+          <article class="card shortcut lift" data-go="practice">
+            <div class="shortcut-icon">◔</div>
+            <h3>Timer daimoku</h3>
+            <p>Sessioni rapide o lunghe con intenzione e nota finale salvata nel diario.</p>
+          </article>
+          <article class="card shortcut lift" data-go="study">
+            <div class="shortcut-icon">✦</div>
+            <h3>Studio del giorno</h3>
+            <p>Spunti brevi per trasformare scoraggiamento, confusione e karma in azione.</p>
+          </article>
+        </div>
+
+        <div class="grid two">
+          <article class="card shortcut lift" data-go="journal">
+            <div class="shortcut-icon">✎</div>
+            <h3>Diario di pratica</h3>
+            <p>Salva intenzioni, benefici, intuizioni e decisioni dopo la recitazione.</p>
+          </article>
+          <article class="card shortcut lift" data-go="settings">
+            <div class="shortcut-icon">⚙</div>
+            <h3>Settings</h3>
+            <p>Campane, voce, velocità del gongyo senza audio e preferenze personali.</p>
+          </article>
+        </div>
+
+        <div class="card quote-card">
+          <div class="quote-mark">“</div>
+          <p>Recita, studia, respira. Lascia che la pratica quotidiana abbia uno spazio bello, semplice e vivo.</p>
+        </div>
+      </section>
+
+      <section id="dictionary" class="view">
+        <div class="card search-card">
+          <div class="row between wrap">
+            <div>
+              <h2>Ricerca buddista Nichiren</h2>
+              <p class="muted">La ricerca privilegia prima i contenuti interni in ottica Nichiren. Se non basta, propone link mirati a fonti buddhiste coerenti.</p>
+            </div>
+            <button id="clearSearch" class="ghost">Pulisci</button>
+          </div>
+          <div class="search-wrap">
+            <input id="searchInput" type="search" placeholder="Cerca: tre veleni, torre preziosa, gohonzon, karma..." />
+            <button id="extendedSearchBtn">Approfondisci</button>
+          </div>
+          <div id="tagRow" class="tag-row"></div>
+        </div>
+        <div id="searchStatus" class="status-line"></div>
+        <div id="dictionaryList" class="stack"></div>
+      </section>
+
+      <section id="practice" class="view">
+        <div id="completeSessionDaimokuPanel" class="card session-panel hidden">
+          <div class="term-meta">Sessione completa · Step 2 di 3</div>
+          <h3>Daimoku</h3>
+          <p id="completeSessionDaimokuText" class="muted">Avvia il timer di Daimoku. Al termine passerai alle preghiere silenziose.</p>
+          <div class="actions compact-actions">
+            <button id="completeSessionStartDaimoku">Avvia Daimoku della sessione</button>
+            <button id="completeSessionSkipToPrayers" class="ghost">Vai alle preghiere</button>
+          </div>
+        </div>
+
+        <div class="card practice-card">
+          <div class="row between wrap">
+            <div>
+              <h2>Timer Daimoku</h2>
+              <p class="muted">Scegli un tempo, chiarisci l’intenzione e poi annota ciò che emerge.</p>
+            </div>
+            <div class="mini-pill">Presenza</div>
+          </div>
+          <div class="preset-row">
+            <button class="preset" data-minutes="5">5 min</button>
+            <button class="preset" data-minutes="10">10 min</button>
+            <button class="preset" data-minutes="15">15 min</button>
+            <button class="preset" data-minutes="30">30 min</button>
+            <button class="preset" data-minutes="60">60 min</button>
+          </div>
+          <label for="intentionInput">Intenzione di oggi</label>
+          <textarea id="intentionInput" rows="3" placeholder="Per cosa sto recitando oggi?"></textarea>
+          <div class="timer-display" id="timerDisplay">10:00</div>
+          <div class="progress"><div id="timerProgress"></div></div>
+          <div class="actions">
+            <button id="startTimer">Avvia</button>
+            <button id="pauseTimer" class="secondary">Pausa</button>
+            <button id="resetTimer" class="ghost">Reset</button>
+            <button id="startImmersive" class="secondary">Modalità immersiva</button>
+            <button id="daimokuAudioToggle" class="ghost">Voce daimoku off</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Dopo la recitazione</h3>
+          <textarea id="benefitInput" rows="4" placeholder="Che cosa ho percepito, compreso o deciso?"></textarea>
+          <button id="savePracticeNote">Salva nel diario</button>
+        </div>
+      </section>
+
+      <section id="gongyo" class="view">
+        <div id="completeSessionGongyoPanel" class="card session-panel hidden">
+          <div class="term-meta">Sessione completa · Step 1 di 3</div>
+          <h3>Gongyo</h3>
+          <p class="muted">Completa Gongyo con audio o lettura manuale. Quando hai finito, passa al Daimoku.</p>
+          <div class="actions compact-actions">
+            <button id="completeSessionGoDaimoku">Ho completato Gongyo · Vai al Daimoku</button>
+            <button id="completeSessionCancelFromGongyo" class="ghost">Annulla sessione</button>
+          </div>
+        </div>
+
+        <div class="card gongyo-master">
+          <div class="row between wrap">
+            <div>
+              <h2>Gongyo completo</h2>
+              <p class="muted">Vista principale in <strong>romaji + italiano</strong>, con opzioni <strong>solo italiano</strong> e <strong>solo romaji</strong>, oltre allo scorrimento manuale o automatico. In auto, il Capitolo 2 scorre per primo, ripete il blocco finale tre volte e poi passa al Capitolo 16.</p>
+            </div>
+            <div class="mini-pill">Focus mode</div>
+          </div>
+
+          <div class="gongyo-toolbar">
+            <div class="segmented">
+              <button id="viewRomajiItaliano" class="seg-btn active">Romaji + italiano</button>
+              <button id="viewItaliano" class="seg-btn">Solo italiano</button>
+              <button id="viewRomaji" class="seg-btn">Solo romaji</button>
+            </div>
+            <div class="segmented">
+              <button id="scrollManual" class="seg-btn active">Scorrimento manuale</button>
+              <button id="scrollAuto" class="seg-btn" type="button">Scorrimento automatico</button>
+            </div>
+          </div>
+
+          <div class="gongyo-toolbar">
+            <label class="speed-wrap">Velocità auto
+              <input id="scrollSpeed" type="range" min="1" max="6" step="1" value="3" />
+            </label>
+            <div class="bell-actions bell-advanced">
+              <button id="bellBtn">🔔 1 colpo</button>
+              <button id="bellTripleBtn" class="secondary">🔔🔔🔔 3 colpi</button>
+              <button id="bellLoopBtn" class="ghost">🔁 Campana continua</button>
+            </div>
+          </div>
+
+          <div id="gongyoStatus" class="muted" style="margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.08);">Pronto.</div>
+
+          <div id="gongyoGuidedHint" class="guided-hint hidden">🎧 Modalità guidata Gongyo attiva: usa Play/Pausa/Stop e scorri il testo manualmente.</div>
+
+          <div class="gongyo-toolbar audio-toolbar">
+            <div class="segmented">
+              <button id="gongyoTextMode" class="seg-btn active">Testo + audio</button>
+              <button id="gongyoListenMode" class="seg-btn">Solo ascolto</button>
+            </div>
+            <div class="bell-actions practice-actions">
+              <button id="gongyoVoiceEnabled" class="secondary">Voce gongyo: ON</button>
+              <button id="gongyoAudioToggle" class="secondary">▶ Play/Pausa</button>
+              <button id="gongyoStopAudio" class="ghost">■ Stop</button>
+              <button id="gongyoRestartBtn" class="ghost">↺ Torna all’inizio</button>
+            </div>
+          </div>
+
+          <div class="gongyo-toolbar bookmark-toolbar">
+            <button id="gongyoSaveBookmark" class="secondary">☆ Salva segnalibro</button>
+            <button id="gongyoResumeBookmark" class="ghost">↪ Continua da qui</button>
+            <span id="gongyoBookmarkInfo" class="muted bookmark-info">Nessun segnalibro salvato.</span>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="card sutra-card">
+            <div class="sutra-head">
+              <span class="pill">Hoben</span>
+              <h3>Capitolo 2 · Espedienti</h3>
+              <button class="chapter-stop-scroll" type="button" data-stop-scroll data-section="hoben">▶ Avvia scorrimento</button>
+            </div>
+            <div id="hobenContainer" class="sutra-scroll"></div>
+          </div>
+
+          <div class="card sutra-card">
+            <div class="sutra-head">
+              <span class="pill">Juryo</span>
+              <h3>Capitolo 16 · Durata della vita del Tathagata</h3>
+              <button class="chapter-stop-scroll" type="button" data-stop-scroll data-section="juryo">▶ Avvia scorrimento</button>
+            </div>
+            <div id="juryoContainer" class="sutra-scroll"></div>
+          </div>
+        </div>
+
+        <div id="completeSessionPrayersPanel" class="card session-panel hidden">
+          <div class="term-meta">Sessione completa · Step 3 di 3</div>
+          <h3>Preghiere silenziose</h3>
+          <p class="muted">Completa le preghiere silenziose. Quando hai finito, chiudi la sessione.</p>
+          <div class="actions compact-actions">
+            <button id="completeSessionFinish">Concludi sessione completa</button>
+            <button id="completeSessionBackDaimoku" class="ghost">Torna al Daimoku</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row between wrap">
+            <div>
+              <h3>Preghiere silenziose</h3>
+              <p class="muted">La campana è prevista solo nella terza preghiera.</p>
+            </div>
+          </div>
+          <div id="silentPrayers" class="stack"></div>
+        </div>
+
+        <div class="card chant-card">
+          <h3>Focus Daimoku</h3>
+          <div class="chant-box">Nam-myoho-renge-kyo</div>
+          <p class="muted">Usa la campana all’inizio, tra le preghiere e alla conclusione.</p>
+        </div>
+      </section>
+
+      <section id="settings" class="view">
+        <div class="card">
+          <h2>Settings</h2>
+          <p class="muted">Personalizza campana, velocità del gongyo e installazione.</p>
+
+          <div class="settings-grid">
+            <div class="setting-block">
+              <label for="bellSoundSelect">Suono campana</label>
+              <select id="bellSoundSelect">
+                <option value="profonda">Profonda meditativa</option>
+                <option value="tempio">Tempio giapponese</option>
+                <option value="luminosa">Chiara luminosa</option>
+                <option value="morbida">Morbida lunga</option>
+              </select>
+              <label for="bellDurationSelect">Durata campana</label>
+              <select id="bellDurationSelect">
+                <option value="1800">Breve</option>
+                <option value="2800">Media</option>
+                <option value="4200">Lunga</option>
+              </select>
+              <div class="actions top-gap">
+                <button id="previewBell">Ascolta anteprima</button>
+              </div>
+              <p class="muted top-gap">Puoi scegliere sia il timbro sia quanto a lungo lasciar risuonare la campana.</p>
+            </div>
+
+            <div class="setting-block">
+              <label for="gongyoSpeedSelect">Velocità gongyo automatico</label>
+              <select id="gongyoSpeedSelect">
+                <option value="1">Molto lenta</option>
+                <option value="2">Lenta</option>
+                <option value="3">Media</option>
+                <option value="4">Sostenuta</option>
+                <option value="5">Veloce</option>
+                <option value="6">Molto veloce</option>
+              </select>
+              <p class="muted top-gap">Questa velocità viene usata nello scorrimento automatico.</p>
+            </div>
+
+            <div class="setting-block">
+              <h3>Installazione</h3>
+              <p class="muted">Se il browser non mostra l’installazione, prova da un link nuovo, fai un refresh completo e poi usa il pulsante Installa o il menu del browser. In questa versione i percorsi PWA sono stati resi più robusti.</p>
+              <button id="openInstallTips" class="secondary">Apri guida installazione</button>
+            </div>
+
+
+<div class="setting-block">
+  <label for="daimokuBellIntervalSelect">Campana durante daimoku</label>
+  <select id="daimokuBellIntervalSelect">
+    <option value="0">Mai</option>
+    <option value="1">Ogni 1 minuto</option>
+    <option value="3">Ogni 3 minuti</option>
+    <option value="5">Ogni 5 minuti</option>
+    <option value="10">Ogni 10 minuti</option>
+    <option value="15">Ogni 15 minuti</option>
+  </select>
+  <label class="checkbox-row" for="daimokuFinalTripleBell"><input id="daimokuFinalTripleBell" type="checkbox" checked /> Tre colpi finali alla fine del timer</label>
+  <p class="muted top-gap">Puoi scegliere se la campana debba suonare a intervalli durante daimoku oppure non suonare mai.</p>
+</div>
+
+<div class="setting-block">
+  <h3>Routine e notifiche</h3>
+  <label for="morningMinutesSelect">Daimoku mattino</label>
+  <select id="morningMinutesSelect">
+    <option value="5">5 minuti</option>
+    <option value="10">10 minuti</option>
+    <option value="15">15 minuti</option>
+    <option value="30">30 minuti</option>
+  </select>
+  <label for="eveningMinutesSelect">Daimoku sera</label>
+  <select id="eveningMinutesSelect">
+    <option value="5">5 minuti</option>
+    <option value="10">10 minuti</option>
+    <option value="15">15 minuti</option>
+    <option value="30">30 minuti</option>
+  </select>
+  <label for="reminderTimeInput">Promemoria quotidiano</label>
+  <input id="reminderTimeInput" type="time" value="08:00">
+  <label class="checkbox-row" for="practiceReminderToggle"><input id="practiceReminderToggle" type="checkbox" /> Attiva promemoria pratica</label>
+  <button id="requestNotificationBtn" class="secondary top-gap">Abilita notifiche</button>
+  <p class="muted top-gap">Le notifiche funzionano quando il browser consente i promemoria. Su alcuni telefoni possono richiedere che l’app sia installata.</p>
+</div>
+
+          </div>
+        </div>
+      </section>
+
+      <section id="journal" class="view">
+        <div class="card benefits-archive-card">
+          <div class="row between wrap">
+            <div>
+              <h2>Archivio benefici</h2>
+              <p class="muted">Salva intenzione, beneficio e difficoltà trasformata in modo ordinato e ricercabile.</p>
+            </div>
+          </div>
+          <div class="grid three">
+            <div>
+              <label for="benefitArchiveIntention">Intenzione</label>
+              <textarea id="benefitArchiveIntention" rows="4" placeholder="Per cosa ho recitato?"></textarea>
+            </div>
+            <div>
+              <label for="benefitArchiveBenefit">Beneficio / intuizione</label>
+              <textarea id="benefitArchiveBenefit" rows="4" placeholder="Che beneficio, intuizione o cambiamento ho percepito?"></textarea>
+            </div>
+            <div>
+              <label for="benefitArchiveDifficulty">Difficoltà trasformata</label>
+              <textarea id="benefitArchiveDifficulty" rows="4" placeholder="Quale difficoltà sto trasformando?"></textarea>
+            </div>
+          </div>
+          <div class="actions top-gap">
+            <button id="saveBenefitArchive">Salva beneficio</button>
+            <button id="prefillBenefitArchive" class="secondary">Usa dati della pratica</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row between wrap">
+            <div>
+              <h3>Cerca nell’archivio benefici</h3>
+              <p class="muted">Cerca per intenzione, beneficio, difficoltà o data.</p>
+            </div>
+          </div>
+          <input id="benefitSearchInput" type="search" placeholder="Cerca nei benefici..." />
+          <div id="benefitsArchiveList" class="stack top-gap"></div>
+        </div>
+
+        <div class="card">
+          <h2>Diario libero</h2>
+          <label for="journalText">Scrivi una riflessione</label>
+          <textarea id="journalText" rows="5" placeholder="Oggi ho capito che..."></textarea>
+          <button id="saveJournalEntry">Salva nota</button>
+        </div>
+        <div id="journalList" class="stack"></div>
+      </section>
+
+      <section id="study" class="view">
+        <div class="card daily-study-card">
+          <div class="row between wrap">
+            <div>
+              <div class="term-meta" id="studyDailyCategory">Studio del giorno</div>
+              <h2 id="studyDailyTitle">Studio del giorno</h2>
+              <p id="studyDailySummary" class="muted"></p>
+            </div>
+            <div class="actions compact-actions">
+              <button id="studyDailyReadMore" class="secondary">Leggi altro</button>
+              <button id="studyDailySave" class="ghost">☆ Salva</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Studio rapido</h2>
+          <div id="studyCards" class="stack"></div>
+        </div>
+
+        <div class="card favorites-evolved-card">
+          <div class="row between wrap">
+            <div>
+              <h2>Preferiti evoluti</h2>
+              <p class="muted">Qui ritrovi concetti, frasi e punti del Gongyo che hai salvato.</p>
+            </div>
+          </div>
+          <div class="grid three favorites-grid">
+            <div>
+              <h3>Concetti</h3>
+              <div id="favoriteConceptsList" class="stack compact-stack"></div>
+            </div>
+            <div>
+              <h3>Frasi</h3>
+              <div id="favoritePhrasesList" class="stack compact-stack"></div>
+            </div>
+            <div>
+              <h3>Punti Gongyo</h3>
+              <div id="favoriteGongyoPointsList" class="stack compact-stack"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottomnav glass">
+      <button data-go="home" class="navbtn active">Home</button>
+      <button data-go="dictionary" class="navbtn">Ricerca</button>
+      <button data-go="practice" class="navbtn">Daimoku</button>
+      <button data-go="gongyo" class="navbtn">Gongyo</button>
+      <button data-go="journal" class="navbtn">Diario</button>
+      <button data-go="settings" class="navbtn">Settings</button>
+    </nav>
+  </div>
+
+  <dialog id="installDialog" class="install-dialog">
+    <div class="dialog-card">
+      <h3>Come installare Pratica Viva</h3>
+      <p><strong>Android / Chrome:</strong> apri il link nuovo, attendi il caricamento completo, poi usa <em>Installa app</em> o <em>Aggiungi a schermata Home</em> dal menu.</p>
+      <p><strong>iPhone / Safari:</strong> usa <em>Condividi</em> → <em>Aggiungi a Home</em>.</p>
+      <p><strong>Se non compare:</strong> apri un link nuovo, fai refresh completo, poi elimina eventuali vecchie scorciatoie e riprova.</p>
+      <button id="closeInstallTips">Chiudi</button>
+    </div>
+  </dialog>
+
+
+  <div id="immersiveOverlay" class="immersive-overlay hidden">
+    <div class="immersive-inner">
+      <button id="closeImmersive" class="immersive-close" aria-label="Chiudi modalità immersiva">×</button>
+      <div class="breath-orb" id="breathOrb"><div id="immersiveProgress" class="immersive-progress"></div></div>
+      <div class="immersive-mantra">Nam-myoho-renge-kyo</div>
+      <div class="immersive-timer" id="immersiveTimer">10:00</div>
+      <div id="immersiveIntention" class="immersive-intention">La tua intenzione apparirà qui.</div>
+      <div class="immersive-sub">Respira, recita, resta presente.</div>
+      <div class="immersive-actions">
+        <button id="immersiveStartPause">Avvia</button>
+        <button id="immersiveBell" class="secondary">🔔 Campana</button>
+        <button id="immersiveReset" class="ghost">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bell-profonda" preload="auto" src="assets/audio/campana-profonda.wav"></audio>
+  <audio id="bell-tempio" preload="auto" src="assets/audio/campana-tempio.wav"></audio>
+  <audio id="bell-luminosa" preload="auto" src="assets/audio/campana-luminosa.wav"></audio>
+  <audio id="bell-morbida" preload="auto" src="assets/audio/campana-morbida.wav"></audio>
+
+    <audio id="daimokuAudio" preload="metadata" src="assets/audio/daimoku.mp3"></audio>
+  <audio id="gongyoAudio" preload="metadata" src="assets/audio/gongyo.mp3"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app-v13k.js?v=13k"></script>
+</body>
+</html>
